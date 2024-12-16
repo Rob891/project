@@ -1,22 +1,15 @@
 const express = require("express");
 const cors = require("cors");
-const {Pool} = require("pg");
+const userRoutes = require("./routes/UserRoutes"); // Import user routes
 
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-const app = express ()
-app.use(cors())
-app.use(express.json())
+// Use user routes
+app.use("/users", userRoutes);
 
-
-const pool = new Pool({
-    user: 'fantasyleaguedb',
-    host: 'localhost',
-    database: 'fantasyleaguedb',
-    port: 5432
-})
-
-module.exports = pool;
-
+// Root route
 app.get("/", (req, res) => {
     res.send("Welcome to the Fantasy League API!");
 });
@@ -30,5 +23,5 @@ app.get("/test-db", async (req, res) => {
     }
 });
 
-
-app.listen(5001, () => console.log('Server is running on http://localhost:5001'))
+// Start the server
+app.listen(5001, () => console.log("Server is running on http://localhost:5001"));

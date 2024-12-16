@@ -1,4 +1,4 @@
-const pool = require('../index'); 
+const pool = require('../db'); 
 
 const User = {
   getAll: async () => {
@@ -6,13 +6,21 @@ const User = {
     return result.rows;
   },
 
- 
   getById: async (id) => {
     const result = await pool.query(
       "SELECT user_id, email, username FROM users WHERE user_id = $1",
       [id]
     );
     return result.rows[0]; 
+  },
+
+  // Get a user by email or username
+  getByEmailOrUsername: async (identifier) => {
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1 OR username = $1",
+      [identifier]
+    );
+    return result.rows[0]; // Returns the user object or null if not found
   },
 
   create: async ({ user_id, email, password_hash, username }) => {
@@ -33,10 +41,8 @@ const User = {
        RETURNING user_id, email, username`,
       [email, password_hash, username, id]
     );
-    return result.rows[0]; // Return the updated user
+    return result.rows[0]; 
   },
-  
-
 
   delete: async (id) => {
     const result = await pool.query("DELETE FROM users WHERE user_id = $1 RETURNING user_id", [id]);
