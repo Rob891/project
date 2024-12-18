@@ -1,6 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const userRoutes = require("./routes/UserRoutes"); // Import user routes
+const playersRoutes = require('./routes/PlayersRoutes');
+const fantasyTeamsRoutes = require("./routes/FantasyTeamRoutes");
+const fantasyTeamPlayersRoutes = require("./routes/fantasyTeamPlayersRoutes");
+const fplRoutes = require("./routes/fplroutes"); 
+
 
 const app = express();
 app.use(cors());
@@ -8,6 +13,11 @@ app.use(express.json());
 
 // Use user routes
 app.use("/users", userRoutes);
+app.use('/players', playersRoutes);
+app.use('/fantasty-team', fantasyTeamsRoutes);
+app.use("/fantasy-team-players", fantasyTeamPlayersRoutes);
+app.use("/api/fpl", fplRoutes);
+
 
 // Root route
 app.get("/", (req, res) => {
