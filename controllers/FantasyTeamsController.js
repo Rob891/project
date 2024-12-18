@@ -10,7 +10,7 @@ exports.createFantasyTeam = async (req, res) => {
     if (existingTeams.length > 0) {
       return res.status(400).json({
         error: "User already has a fantasy team",
-        team: existingTeams[0], 
+        team: existingTeams[0],
       });
     }
 
@@ -52,6 +52,26 @@ exports.getFantasyTeamsByUser = async (req, res) => {
     console.error("Error fetching fantasy teams:", err.message);
     res.status(500).json({
       error: "Failed to fetch fantasy teams",
+      details: err.message,
+    });
+  }
+};
+
+exports.getFantasyTeamIdByUserId = async (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    const fantasy_team_id = await FantasyTeams.getFantasyTeamIdByUserId(user_id);
+
+    if (!fantasy_team_id) {
+      return res.status(404).json({ message: "No fantasy team found for this user" });
+    }
+
+    res.json({ fantasy_team_id });
+  } catch (err) {
+    console.error("Error fetching fantasy team ID:", err.message);
+    res.status(500).json({
+      error: "Failed to fetch fantasy team ID",
       details: err.message,
     });
   }

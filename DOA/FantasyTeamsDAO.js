@@ -19,6 +19,14 @@ const FantasyTeams = {
     return result.rows;
   },
 
+  getFantasyTeamIdByUserId: async (user_id) => {
+    const result = await pool.query(
+      `SELECT fantasy_team_id FROM FantasyTeams WHERE user_id = $1`,
+      [user_id]
+    );
+    return result.rows[0]?.fantasy_team_id || null; // Return null if no team is found
+  },
+
   getById: async (fantasy_team_id) => {
     const result = await pool.query(
       `SELECT * FROM FantasyTeams WHERE fantasy_team_id = $1`,

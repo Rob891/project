@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 
 exports.getAllPlayers = async (req, res) => {
   try {
+    console.log("Xxx")
     const players = await Player.getAll();
     res.json(players);
   } catch (err) {
@@ -82,3 +83,63 @@ exports.syncPlayers = async (req, res) => {
     res.status(500).json({ error: "Failed to sync players from FPL API", details: err.message });
   }
 };
+
+exports.getPlayerIdByName = async (req, res) => {
+  const { name } = req.params;
+
+  try {
+    const player = await Player.getByName(name);
+    if (!player) return res.status(404).json({ error: "Player not found" });
+
+    res.json({ player_id: player.player_id });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch player ID", details: err.message });
+  }
+};
+
+// New method to get players with photos and database player IDs
+exports.getPlayersWithPhotos = async (req, res) => {
+    try {
+      console.log("Fetching all players from the database...");
+      const dbPlayers = await Player.getAll();
+      console.log(`Fetched ${dbPlayers.length} players from the database.`);
+  
+      console.log("Fetching players from the FPL API...");
+      const fplPlayers = await FPLService.fetchPlayers();
+      console.log(`Fetched ${fplPlayers.length} players from the FPL API.`);
+  
+      console.log("Creating FPL player photo map...");
+      const fplPlayerPhotos = new Map(
+        fplPlayers.map((fplPlayer) => [
+          `${fplPlayer.first_name} ${fplPlayer.second_name}`,
+          `https://resources.premierleague.com/premierleague/photos/players/110x140/p${fplPlayer.code}.png`,
+        ])
+      );
+      console.log(`FPL photo map created with ${fplPlayerPhotos.size} entries.`);
+  
+      console.log("Mapping database players to include FPL photos...");
+      const playersWithPhotos = dbPlayers.map((dbPlayer) => {
+        const photo = fplPlayerPhotos.get(dbPlayer.name) || null;
+        if (!photo) {
+          console.warn(`Photo not found for player: ${dbPlayer.name}`);
+        }
+        return {
+          player_id: dbPlayer.player_id,
+          name: dbPlayer.name,
+          position: dbPlayer.position,
+          team_id: dbPlayer.team_id,
+          nationality: dbPlayer.nationality,
+          price: dbPlayer.price,
+          total_points: dbPlayer.total_points,
+          photo: photo,
+        };
+      });
+  
+      console.log(`Successfully mapped ${playersWithPhotos.length} players with photos.`);
+      res.json(playersWithPhotos);
+    } catch (err) {
+      console.error("Error occurred while fetching players with photos:", err.message);
+      res.status(500).json({ error: "Failed to fetch players with photos", details: err.message });
+    }
+  };
+  

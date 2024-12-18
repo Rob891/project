@@ -17,6 +17,10 @@ const Player = {
     `, [player_id]);
     return result.rows[0];
   },
+  getByName: async (name) => {
+    const result = await pool.query(`SELECT * FROM players WHERE name = $1`, [name]);
+    return result.rows[0];
+  },
 
   create: async ({ player_id, name, position, team_id, nationality, price }) => {
     const result = await pool.query(`

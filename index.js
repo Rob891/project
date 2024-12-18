@@ -14,12 +14,12 @@ app.use(express.json());
 // Use user routes
 app.use("/users", userRoutes);
 app.use('/players', playersRoutes);
-app.use('/fantasty-team', fantasyTeamsRoutes);
+app.use('/fantasy-team', fantasyTeamsRoutes);
 app.use("/fantasy-team-players", fantasyTeamPlayersRoutes);
 app.use("/api/fpl", fplRoutes);
 
 
-// Root route
+
 app.get("/", (req, res) => {
     res.send("Welcome to the Fantasy League API!");
 });

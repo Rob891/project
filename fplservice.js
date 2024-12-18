@@ -13,19 +13,16 @@ const FPLService = {
     }
   },
 
-  // Fetch players from FPL data
   fetchPlayers: async () => {
     const data = await FPLService.fetchFPLData();
     return data.elements; 
   },
 
-  // Fetch teams from FPL data
   fetchTeams: async () => {
     const data = await FPLService.fetchFPLData();
     return data.teams; 
   },
 
-  // Fetch events (gameweeks)
   fetchGameweeks: async () => {
     const data = await FPLService.fetchFPLData();
     return data.events; 
