@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const API_KEY = "fea67b3095ca972a393700c20a02b614"; 
+const API_KEY = "0e1766168ec6bd20c8a1475ff6a75cab"; 
 const LEAGUE_ID = 39; 
 const SEASON = 2024; 
 

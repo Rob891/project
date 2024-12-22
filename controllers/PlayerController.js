@@ -98,48 +98,36 @@ exports.getPlayerIdByName = async (req, res) => {
 };
 
 // New method to get players with photos and database player IDs
-exports.getPlayersWithPhotos = async (req, res) => {
-    try {
-      console.log("Fetching all players from the database...");
-      const dbPlayers = await Player.getAll();
-      console.log(`Fetched ${dbPlayers.length} players from the database.`);
-  
-      console.log("Fetching players from the FPL API...");
-      const fplPlayers = await FPLService.fetchPlayers();
-      console.log(`Fetched ${fplPlayers.length} players from the FPL API.`);
-  
-      console.log("Creating FPL player photo map...");
-      const fplPlayerPhotos = new Map(
-        fplPlayers.map((fplPlayer) => [
-          `${fplPlayer.first_name} ${fplPlayer.second_name}`,
-          `https://resources.premierleague.com/premierleague/photos/players/110x140/p${fplPlayer.code}.png`,
-        ])
-      );
-      console.log(`FPL photo map created with ${fplPlayerPhotos.size} entries.`);
-  
-      console.log("Mapping database players to include FPL photos...");
-      const playersWithPhotos = dbPlayers.map((dbPlayer) => {
-        const photo = fplPlayerPhotos.get(dbPlayer.name) || null;
-        if (!photo) {
-          console.warn(`Photo not found for player: ${dbPlayer.name}`);
-        }
-        return {
-          player_id: dbPlayer.player_id,
-          name: dbPlayer.name,
-          position: dbPlayer.position,
-          team_id: dbPlayer.team_id,
-          nationality: dbPlayer.nationality,
-          price: dbPlayer.price,
-          total_points: dbPlayer.total_points,
-          photo: photo,
-        };
-      });
-  
-      console.log(`Successfully mapped ${playersWithPhotos.length} players with photos.`);
-      res.json(playersWithPhotos);
-    } catch (err) {
-      console.error("Error occurred while fetching players with photos:", err.message);
-      res.status(500).json({ error: "Failed to fetch players with photos", details: err.message });
-    }
-  };
-  
+exports.getphotos = async (req, res) => {
+  try {
+    console.log("Fetching all players from the database...");
+    const players = await Player.getAll(); // Get all players from the database
+    console.log(`Fetched ${players.length} players.`);
+
+    console.log("Generating player photos...");
+    const playersWithPhotos = players.map((player) => {
+      const photoUrl = player.fpl_player_id
+        ? `https://resources.premierleague.com/premierleague/photos/players/110x140/p${player.fpl_player_id}.png`
+        : null;
+
+      return {
+        player_id: player.player_id,
+        name: player.name,
+        position: player.position,
+        team_id: player.team_id,
+        nationality: player.nationality,
+        price: player.price,
+        total_points: player.total_points,
+        photo: photoUrl, // Ensure this is the generated URL
+      };
+    });
+
+    console.log(`Generated photos for ${playersWithPhotos.length} players.`);
+    res.json(playersWithPhotos); // Send the players with photo URLs
+  } catch (err) {
+    console.error("Error occurred while generating player photos:", err.message);
+    res
+      .status(500)
+      .json({ error: "Failed to fetch players with photos", details: err.message });
+  }
+};

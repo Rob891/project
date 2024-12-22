@@ -46,14 +46,19 @@ const syncPlayers = async (players, teamIdMap) => {
         continue;
       }
 
-      // Insert player, update total_points if player already exists
+      // Insert player, update total_points and fpl_player_id if player already exists
       await pool.query(
-        `INSERT INTO players (player_id, name, position, team_id, nationality, price, total_points)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)
-         ON CONFLICT (player_id) DO UPDATE
-         SET total_points = EXCLUDED.total_points`,
+        `INSERT INTO players (player_id, fpl_player_id, name, position, team_id, nationality, price, total_points)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         ON CONFLICT (fpl_player_id) DO UPDATE
+         SET total_points = EXCLUDED.total_points,
+             name = EXCLUDED.name,
+             position = EXCLUDED.position,
+             team_id = EXCLUDED.team_id,
+             price = EXCLUDED.price`,
         [
           playerUUID,
+          player.id, // FPL player ID from API
           `${player.first_name} ${player.second_name}`,
           player.element_type, // Position type (1 = GK, 2 = DEF, etc.)
           teamUUID, // Mapped team UUID
