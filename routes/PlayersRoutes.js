@@ -15,7 +15,6 @@ router.put("/:id", playersController.updatePlayer);
 router.delete("/:id", playersController.deletePlayer);
 
 router.post("/sync", playersController.syncPlayers);
-router.get("/playerPhotos", playersController.getphotos);
 
 
 
