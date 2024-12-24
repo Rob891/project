@@ -28,8 +28,9 @@ const User = {
       "INSERT INTO users (user_id, email, password_hash, username) VALUES ($1, $2, $3, $4) RETURNING user_id, email, username",
       [user_id, email, password_hash, username]
     );
-    return result.rows[0]; 
+    return result.rows[0]; // Returns the newly created user
   },
+  
 
   update: async (id, { email, password_hash, username }) => {
     const result = await pool.query(
@@ -41,6 +42,7 @@ const User = {
        RETURNING user_id, email, username`,
       [email, password_hash, username, id]
     );
+    console.log({ user_id, email, password_hash, username });
     return result.rows[0]; 
   },
 

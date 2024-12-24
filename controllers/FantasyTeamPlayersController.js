@@ -82,3 +82,7 @@ exports.setCaptain = async (req, res) => {
     });
   }
 };
+
+console.log(req.body);
+console.error("Fetch error details:", err);
+

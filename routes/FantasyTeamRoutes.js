@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const FantasyTeamsController = require("../controllers/FantasyTeamsController");
 
+
 // Route to create a fantasy team
 router.post("/", FantasyTeamsController.createFantasyTeam);
 

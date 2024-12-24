@@ -15,4 +15,8 @@ router.delete("/:id", playersController.deletePlayer);
 
 router.post("/sync", playersController.syncPlayers);
 
+// get by team ID for team selection
+router.get("/team/:team_id", playersController.getPlayersByTeam);
+
+
 module.exports = router;

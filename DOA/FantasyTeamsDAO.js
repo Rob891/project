@@ -1,12 +1,12 @@
 const pool = require('../db');
 
 const FantasyTeams = {
-  create: async ({ fantasy_team_id, user_id, team_name, budget }) => {
+  create: async ({ fantasy_team_id, user_id, team_name }) => {
     const result = await pool.query(
-      `INSERT INTO FantasyTeams (fantasy_team_id, user_id, team_name, budget)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO FantasyTeams (fantasy_team_id, user_id, team_name)
+       VALUES ($1, $2, $3)
        RETURNING fantasy_team_id, user_id, team_name, total_points, budget`,
-      [fantasy_team_id, user_id, team_name, budget]
+      [fantasy_team_id, user_id, team_name]
     );
     return result.rows[0];
   },

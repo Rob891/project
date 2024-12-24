@@ -22,16 +22,35 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
+  
   const { email, password, username } = req.body;
+  console.log("Request body:", req.body);
+
+  // Validate required fields
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required." });
+  }
+
   try {
-    const user_id = uuidv4();
-    const password_hash = password;
-    const newUser = await User.create({ user_id, email, password_hash, username });
+    const userExists = await User.getByEmailOrUsername(email);
+    if (userExists) {
+      return res.status(400).json({ error: "Email or username already exists." });
+    }
+
+    const newUser = await User.create({
+      user_id: uuidv4(),
+      email,
+      password_hash: await bcrypt.hash(password, 10),
+      username: username || null, // Allow username to be optional
+    });
+
     res.status(201).json({ message: "User created successfully", user: newUser });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to create user", details: err.message });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Failed to create user", details: error.message });
   }
 };
+
 
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
@@ -72,3 +91,5 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ error: "Failed to login user", details: err.message });
   }
 };
+
+

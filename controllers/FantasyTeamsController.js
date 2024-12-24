@@ -2,6 +2,7 @@ const FantasyTeams = require("../DOA/FantasyTeamsDAO");
 const { v4: uuidv4 } = require("uuid");
 
 exports.createFantasyTeam = async (req, res) => {
+
   const { user_id, team_name } = req.body;
 
   try {
@@ -79,3 +80,6 @@ exports.deleteFantasyTeam = async (req, res) => {
     });
   }
 };
+
+console.log(req.body);
+console.error("Fetch error details:", err);

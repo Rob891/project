@@ -14,11 +14,14 @@ exports.getAllPlayers = async (req, res) => {
 exports.getPlayerById = async (req, res) => {
   const { id } = req.params;
   try {
+
     const player = await Player.getById(id);
     if (!player) return res.status(404).json({ error: "Player not found" });
     res.json(player);
   } catch (err) {
+
     res.status(500).json({ error: "Failed to fetch player", details: err.message });
+    
   }
 };
 
@@ -82,3 +85,21 @@ exports.syncPlayers = async (req, res) => {
     res.status(500).json({ error: "Failed to sync players from FPL API", details: err.message });
   }
 };
+
+const db = require("../db"); // Replace with your database connection setup
+
+exports.getPlayersByTeam = async (req, res) => {
+  const { team_id } = req.params;
+
+  try {
+    const query = "SELECT * FROM players WHERE team_id = $1";
+    const values = [team_id];
+
+    const result = await db.query(query, values);
+    res.json(result.rows); // Send fetched players to the frontend
+  } catch (err) {
+    console.error("Error fetching players by team:", err);
+    res.status(500).json({ error: "Failed to fetch players for the team." });
+  }
+};
+

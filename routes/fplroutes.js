@@ -65,3 +65,4 @@ router.get("/teams/standings", async (req, res) => {
 });
 
 module.exports = router;
+
