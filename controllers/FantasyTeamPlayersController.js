@@ -1,7 +1,6 @@
 const FantasyTeamPlayers = require('../DOA/FantasyTeamPlayersDAO');
 
 const FantasyTeamPlayersController = {
-  // Add a player to the fantasy team
   addPlayer: async (req, res) => {
     const { fantasy_team_id, player_id, is_captain = false, points = 0 } = req.body;
 
@@ -24,7 +23,6 @@ const FantasyTeamPlayersController = {
     }
   },
 
-  // Get all players in a fantasy team
   getPlayersByTeam: async (req, res) => {
     const { fantasy_team_id } = req.params;
 
@@ -42,7 +40,6 @@ const FantasyTeamPlayersController = {
     }
   },
 
-  // Remove a player from the fantasy team
   removePlayer: async (req, res) => {
     const { fantasy_team_id, player_id } = req.params;
 
@@ -65,7 +62,6 @@ const FantasyTeamPlayersController = {
     }
   },
 
-  // Set a captain for the fantasy team
   setCaptain: async (req, res) => {
     const { fantasy_team_id, player_id } = req.body;
 
@@ -83,7 +79,6 @@ const FantasyTeamPlayersController = {
     }
   },
 
-  // Get the captain of a fantasy team
   getCaptain: async (req, res) => {
     const { fantasy_team_id } = req.params;
 

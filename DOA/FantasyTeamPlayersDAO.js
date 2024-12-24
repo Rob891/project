@@ -19,7 +19,6 @@ const FantasyTeamPlayers = {
     }
   },
 
-  // Get all players in a fantasy team
   getPlayersByTeam: async (fantasy_team_id) => {
     try {
       const result = await pool.query(
@@ -34,7 +33,6 @@ const FantasyTeamPlayers = {
     }
   },
 
-  // Remove a player from the fantasy team
   removePlayer: async (fantasy_team_id, player_id) => {
     try {
       const result = await pool.query(
@@ -53,7 +51,6 @@ const FantasyTeamPlayers = {
     }
   },
 
-  // Set a captain for the fantasy team
   setCaptain: async (fantasy_team_id, player_id) => {
     try {
       // Ensure only one captain per team
@@ -83,7 +80,6 @@ const FantasyTeamPlayers = {
     }
   },
 
-  // Get the captain of a fantasy team
   getCaptain: async (fantasy_team_id) => {
     try {
       const result = await pool.query(

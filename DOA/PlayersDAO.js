@@ -3,7 +3,7 @@ const pool = require('../db');
 const Player = {
   getAll: async () => {
     const result = await pool.query(`
-      SELECT player_id, name, position, team_id, nationality, price, total_points
+      SELECT player_id, fpl_player_id, name, position, team_id, nationality, price, total_points
       FROM players
     `);
     return result.rows;

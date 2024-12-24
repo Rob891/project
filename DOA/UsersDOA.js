@@ -14,7 +14,6 @@ const User = {
     return result.rows[0]; 
   },
 
-  // Get a user by email or username
   getByEmailOrUsername: async (identifier) => {
     const result = await pool.query(
       "SELECT * FROM users WHERE email = $1 OR username = $1",

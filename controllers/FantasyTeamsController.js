@@ -14,10 +14,8 @@ exports.createFantasyTeam = async (req, res) => {
       });
     }
 
-    // Generate a new UUID for the fantasy team
     const fantasy_team_id = uuidv4();
-    const budget = 100.0; // Default budget
-
+    const budget = 100.0; 
     const newTeam = await FantasyTeams.create({
       fantasy_team_id,
       user_id,

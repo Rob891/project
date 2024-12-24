@@ -97,37 +97,3 @@ exports.getPlayerIdByName = async (req, res) => {
   }
 };
 
-// New method to get players with photos and database player IDs
-exports.getphotos = async (req, res) => {
-  try {
-    console.log("Fetching all players from the database...");
-    const players = await Player.getAll(); // Get all players from the database
-    console.log(`Fetched ${players.length} players.`);
-
-    console.log("Generating player photos...");
-    const playersWithPhotos = players.map((player) => {
-      const photoUrl = player.fpl_player_id
-        ? `https://resources.premierleague.com/premierleague/photos/players/110x140/p${player.fpl_player_id}.png`
-        : null;
-
-      return {
-        player_id: player.player_id,
-        name: player.name,
-        position: player.position,
-        team_id: player.team_id,
-        nationality: player.nationality,
-        price: player.price,
-        total_points: player.total_points,
-        photo: photoUrl, // Ensure this is the generated URL
-      };
-    });
-
-    console.log(`Generated photos for ${playersWithPhotos.length} players.`);
-    res.json(playersWithPhotos); // Send the players with photo URLs
-  } catch (err) {
-    console.error("Error occurred while generating player photos:", err.message);
-    res
-      .status(500)
-      .json({ error: "Failed to fetch players with photos", details: err.message });
-  }
-};

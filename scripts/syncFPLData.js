@@ -2,7 +2,6 @@ const { v4: uuidv4 } = require("uuid");
 const FPLService = require("../fplservice");
 const pool = require("../db");
 
-// Function to sync teams with generated UUIDs and FPL IDs
 const syncTeams = async (teams) => {
   const teamIdMap = new Map();
   console.log("Syncing teams...");
@@ -11,7 +10,6 @@ const syncTeams = async (teams) => {
     try {
       const teamUUID = uuidv4();
 
-      // Insert or ignore if team already exists (based on fpl_team_id)
       const result = await pool.query(
         `INSERT INTO teams (team_id, fpl_team_id, team_name, stadium)
          VALUES ($1, $2, $3, $4)
@@ -22,17 +20,16 @@ const syncTeams = async (teams) => {
       );
 
       const insertedTeamId = result.rows[0].team_id;
-      teamIdMap.set(team.id, insertedTeamId); // Map FPL team.id to team_id (UUID)
+      teamIdMap.set(team.id, insertedTeamId);
       console.log(`Team added/updated: ${team.name} with UUID: ${insertedTeamId}`);
     } catch (err) {
       console.error(`Error adding/updating team: ${team.name}`, err.message);
     }
   }
 
-  return teamIdMap; // Return the mapping of FPL IDs to UUIDs
+  return teamIdMap;
 };
 
-// Function to sync players with correct team mapping
 const syncPlayers = async (players, teamIdMap) => {
   console.log("Syncing players...");
 
@@ -46,7 +43,8 @@ const syncPlayers = async (players, teamIdMap) => {
         continue;
       }
 
-      // Insert player, update total_points and fpl_player_id if player already exists
+      const playerCode = player.code;
+
       await pool.query(
         `INSERT INTO players (player_id, fpl_player_id, name, position, team_id, nationality, price, total_points)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -58,12 +56,12 @@ const syncPlayers = async (players, teamIdMap) => {
              price = EXCLUDED.price`,
         [
           playerUUID,
-          player.id, // FPL player ID from API
+          playerCode,
           `${player.first_name} ${player.second_name}`,
-          player.element_type, // Position type (1 = GK, 2 = DEF, etc.)
-          teamUUID, // Mapped team UUID
-          "Unknown", // FPL API does not provide nationality
-          player.now_cost / 10, // Convert price to a float
+          player.element_type,
+          teamUUID,
+          "Unknown",
+          player.now_cost / 10,
           player.total_points,
         ]
       );
@@ -77,21 +75,20 @@ const syncPlayers = async (players, teamIdMap) => {
   }
 };
 
-// Main function to fetch FPL data and sync teams and players
 const syncFPLData = async () => {
   try {
     console.log("Fetching FPL data...");
-    const teams = await FPLService.fetchTeams(); // Fetch teams
-    const players = await FPLService.fetchPlayers(); // Fetch players
+    const teams = await FPLService.fetchTeams();
+    const players = await FPLService.fetchPlayers();
 
-    const teamIdMap = await syncTeams(teams); // Sync teams and get team mapping
-    await syncPlayers(players, teamIdMap); // Sync players using team mapping
+    const teamIdMap = await syncTeams(teams);
+    await syncPlayers(players, teamIdMap);
 
     console.log("FPL data sync completed successfully!");
   } catch (err) {
     console.error("Error syncing FPL data:", err.message);
   } finally {
-    pool.end(); // Close the database connection
+    pool.end();
   }
 };
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const userRoutes = require("./routes/UserRoutes"); // Import user routes
+const pool = require("./db");
+const userRoutes = require("./routes/UserRoutes"); 
 const playersRoutes = require('./routes/PlayersRoutes');
 const fantasyTeamsRoutes = require("./routes/FantasyTeamRoutes");
 const fantasyTeamPlayersRoutes = require("./routes/fantasyTeamPlayersRoutes");
